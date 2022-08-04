@@ -1,0 +1,31 @@
+body {
+  font-family: Helvetica;
+  font-weight: bold;
+}
+
+.layout {
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: repeat(auto-fit, 400px);
+  grid-gap: 30px;
+}
+.layout__list {
+  align-self: start;
+  background-color: lightgray;
+  display: grid;
+  border-radius: 4px;
+}
+
+.list__header p {
+  margin: 5px;
+}
+
+.list__card {
+  background-color: ghostwhite;
+  background: ghostwhite;
+  display: grid;
+  box-sizing: border-box;
+  margin: 10px;
+  border-radius: 4px;
+  padding: 16px;
+}
