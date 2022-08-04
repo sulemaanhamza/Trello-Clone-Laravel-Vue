@@ -16,6 +16,13 @@ body {
   border-radius: 4px;
 }
 
+.list__header {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px;
+}
 .list__header p {
   margin: 5px;
 }
