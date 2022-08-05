@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\CategoryController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+
+    if(!Auth::check()) Auth::loginUsingId(1);
     return view('welcome');
 });
+
+
+

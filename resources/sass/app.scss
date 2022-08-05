@@ -30,6 +30,10 @@ body {
     p {
         margin: 5px;
     }
+
+    &--delete {
+        padding: 5px;
+    }
   }
 
   .list__card {
@@ -42,5 +46,50 @@ body {
 
     padding: 16px;
 
+  }
+
+  .card__add {
+
+    border-radius: 4px;
+    padding: 10px;
+
+    &--btn {
+        padding: 5px;
+    }
+  }
+
+  .AddCard__modal {
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    fieldset {
+        border: none;
+    }
+
+    label {
+
+        display: block;
+        margin: 10px 0;
+    }
+
+    input, textarea {
+
+        width: 100%;
+        margin: 10px 0;
+        padding: 0.6rem;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 5px;
+    }
+
+    &--errorTxt {
+
+        margin: 7px 0;
+        color: red;
+    }
   }
 

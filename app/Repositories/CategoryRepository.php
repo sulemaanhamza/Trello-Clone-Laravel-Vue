@@ -9,7 +9,7 @@ class CategoryRepository
 {
     public function getCategories($filters=[])
     {
-        $query = Category::query();
+        $query = Category::query()->with('cards');
 
         if(count($filters) > 0)
         {

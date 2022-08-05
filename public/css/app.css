@@ -26,6 +26,9 @@ body {
 .list__header p {
   margin: 5px;
 }
+.list__header--delete {
+  padding: 5px;
+}
 
 .list__card {
   background-color: ghostwhite;
@@ -35,4 +38,37 @@ body {
   margin: 10px;
   border-radius: 4px;
   padding: 16px;
+}
+
+.card__add {
+  border-radius: 4px;
+  padding: 10px;
+}
+.card__add--btn {
+  padding: 5px;
+}
+
+.AddCard__modal {
+  padding: 30px;
+  box-sizing: border-box;
+}
+.AddCard__modal fieldset {
+  border: none;
+}
+.AddCard__modal label {
+  display: block;
+  margin: 10px 0;
+}
+.AddCard__modal input, .AddCard__modal textarea {
+  width: 100%;
+  margin: 10px 0;
+  padding: 0.6rem;
+  box-sizing: border-box;
+}
+.AddCard__modal button {
+  padding: 5px;
+}
+.AddCard__modal--errorTxt {
+  margin: 7px 0;
+  color: red;
 }

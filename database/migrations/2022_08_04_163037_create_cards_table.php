@@ -20,6 +20,7 @@ class CreateCardsTable extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->boolean('status')->default(true);
+            $table->unsignedInteger('order');
             $table->timestamps();
         });
     }
