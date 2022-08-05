@@ -31,6 +31,23 @@ class CardController extends Controller
 
     public function update(Card $card, Request $request)
     {
+        $request->validate(['title'=>'required']);
+
+        $updated = $card->update([
+                            'title'         =>  $request->input('title'),
+                            'description'   =>  $request->input('description') ?? null
+        ]);
+
+        if($updated)
+        {
+            return response()->json(['status'=>'success']);
+        }
+
+        return response()->json(['status'=>'error'],500);
+    }
+
+    public function updateCategory(Card $card, Request $request)
+    {
         if($request->has('category'))
         {
             if(Category::whereStatus(true)->whereId($request->input('category'))->exists())

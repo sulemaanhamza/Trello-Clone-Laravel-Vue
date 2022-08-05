@@ -3,6 +3,13 @@ body {
   font-weight: bold;
 }
 
+#nav {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .layout {
   display: grid;
   grid-template-rows: 1fr;
@@ -33,11 +40,18 @@ body {
 .list__card {
   background-color: ghostwhite;
   background: ghostwhite;
-  display: grid;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
   box-sizing: border-box;
   margin: 10px;
   border-radius: 4px;
   padding: 16px;
+  cursor: move;
+}
+.list__card .card__label a {
+  color: #333;
+  text-decoration: none;
 }
 
 .card__add {

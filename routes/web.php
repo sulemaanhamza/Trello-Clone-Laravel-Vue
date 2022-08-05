@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DatabaseDumpController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,5 @@ Route::get('/', function () {
 });
 
 
+Route::get('download/database-dump', [DatabaseDumpController::class, 'dump']);
 

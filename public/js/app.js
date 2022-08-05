@@ -2085,6 +2085,16 @@ var MODAL_WIDTH = 656;
         title: null,
         description: null,
         error: null
+      },
+      updateCardPayload: {
+        id: null,
+        title: null,
+        description: null,
+        error: null
+      },
+      addNewCategoryPayload: {
+        title: null,
+        error: null
       }
     };
   },
@@ -2114,7 +2124,7 @@ var MODAL_WIDTH = 656;
       var ItemId = data.clone.getAttribute('id');
 
       if (targetCategory !== undefined && ItemId !== undefined) {
-        axios__WEBPACK_IMPORTED_MODULE_1___default().put("/api/cards/".concat(ItemId, "?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo&category=").concat(targetCategory)).then(function (resp) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default().put("/api/cards/".concat(ItemId, "/update-category?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo&category=").concat(targetCategory)).then(function (resp) {
           _this2.fetchBoardData();
         })["catch"](function (err) {
           console.log(err);
@@ -2158,6 +2168,98 @@ var MODAL_WIDTH = 656;
         description: null
       };
       this.$modal.hide('add-new-card');
+    },
+    saveNewCategory: function saveNewCategory() {
+      var _this4 = this;
+
+      if (!this.addNewCategoryPayload.title || this.addNewCategoryPayload.title == '') {
+        this.addNewCategoryPayload.error = 'Category title is required';
+        return false;
+      } else {
+        this.addNewCategoryPayload.error = null;
+        axios__WEBPACK_IMPORTED_MODULE_1___default().post("/api/categories?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo", {
+          title: this.addNewCategoryPayload.title
+        }).then(function (resp) {
+          _this4.closeAddNewCategoryModal();
+
+          _this4.fetchBoardData();
+        })["catch"](function (err) {
+          _this4.closeAddNewCategoryModal();
+
+          console.log(err);
+        });
+      }
+    },
+    closeAddNewCategoryModal: function closeAddNewCategoryModal() {
+      this.addNewCategoryPayload = {
+        title: null,
+        error: null
+      };
+      this.$modal.hide('add-new-category');
+    },
+    deleteCategory: function deleteCategory(category) {
+      var _this5 = this;
+
+      if (confirm('Are you sure? This will delete category and all linked cards.')) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default()["delete"]("/api/categories/".concat(category, "?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo")).then(function (resp) {
+          _this5.fetchBoardData();
+        })["catch"](function (err) {
+          _this5.closeAddNewCardModal();
+
+          console.log(err);
+        });
+      }
+    },
+    showSingleCardModal: function showSingleCardModal(category, card) {
+      var cat = this.categoriesWithCards.find(function (ct) {
+        return ct.id === category;
+      });
+
+      if (cat && cat.cards) {
+        var cardObject = cat.cards.find(function (crd) {
+          return crd.id === card;
+        });
+
+        if (cardObject) {
+          this.updateCardPayload.id = cardObject.id;
+          this.updateCardPayload.title = cardObject.title;
+          this.updateCardPayload.description = cardObject.description;
+          this.$modal.show('update-existing-card');
+        }
+      }
+    },
+    closeUpdateCardModal: function closeUpdateCardModal() {
+      this.updateCardPayload = {
+        title: null,
+        description: null,
+        error: null
+      };
+      this.$modal.hide('update-existing-card');
+    },
+    updateCard: function updateCard(card) {
+      var _this6 = this;
+
+      if (!this.updateCardPayload.title || this.updateCardPayload.title == '') {
+        this.updateCardPayload.error = 'Card title is required';
+        return false;
+      } else if (!card || card == '') {
+        this.updateCardPayload.error = 'Something went wrong';
+        return false;
+      } else {
+        this.updateCardPayload.error = null;
+        axios__WEBPACK_IMPORTED_MODULE_1___default().put("/api/cards/".concat(card, "?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo"), {
+          title: this.updateCardPayload.title,
+          description: this.updateCardPayload.description
+        }).then(function (resp) {
+          _this6.closeUpdateCardModal();
+
+          _this6.fetchBoardData();
+        })["catch"](function (err) {
+          _this6.closeUpdateCardModal();
+
+          console.log(err);
+        });
+      }
     }
   }
 });
@@ -2182,14 +2284,19 @@ var render = function render() {
 
   return _c("div", [_c("div", {
     staticClass: "layout"
-  }, _vm._l(_vm.categoriesWithCards, function (category) {
+  }, [_vm._l(_vm.categoriesWithCards, function (category) {
     return _c("div", {
       key: category.id,
       staticClass: "layout__list"
     }, [_c("div", {
       staticClass: "list__header"
     }, [_c("p", [_c("strong", [_vm._v(_vm._s(category.title || ""))])]), _vm._v(" "), _c("button", {
-      staticClass: "list__header--delete"
+      staticClass: "list__header--delete",
+      on: {
+        click: function click($event) {
+          return _vm.deleteCategory(category.id);
+        }
+      }
     }, [_vm._v("Delete")])]), _vm._v(" "), _c("draggable", {
       attrs: {
         "ghost-class": "ghost",
@@ -2220,7 +2327,20 @@ var render = function render() {
         }
       }, [_c("label", {
         staticClass: "card__label"
-      }, [_vm._v(_vm._s(card.title || ""))])]);
+      }, [_c("a", {
+        attrs: {
+          href: "javascript:;"
+        },
+        on: {
+          click: function click($event) {
+            return _vm.showSingleCardModal(category.id, card.id);
+          }
+        }
+      }, [_vm._v(_vm._s(card.title || ""))])]), _vm._v(" "), _c("a", {
+        attrs: {
+          href: ""
+        }
+      }, [_vm._v("x")])]);
     }), _vm._v(" "), _c("div", {
       staticClass: "card__add",
       attrs: {
@@ -2235,7 +2355,96 @@ var render = function render() {
         }
       }
     }, [_vm._v("+ Add New Card")])])], 2)], 1);
-  }), 0), _vm._v(" "), _c("modal", {
+  }), _vm._v(" "), _c("div", {
+    staticClass: "layout__list"
+  }, [_vm._m(0), _vm._v(" "), _c("div", {
+    staticClass: "list__card"
+  }, [_c("button", {
+    staticClass: "card__add--btn",
+    on: {
+      click: function click($event) {
+        return _vm.$modal.show("add-new-category");
+      }
+    }
+  }, [_vm._v("+ Add New Category")])])])], 2), _vm._v(" "), _c("modal", {
+    attrs: {
+      name: "update-existing-card",
+      transition: "pop-out",
+      width: _vm.modalWidth,
+      "focus-trap": true,
+      height: 500,
+      clickToClose: false
+    }
+  }, [_c("div", {
+    staticClass: "AddCard__modal"
+  }, [_c("fieldset", [_c("legend", [_vm._v("Update Card:")]), _vm._v(" "), _c("div", [_c("label", {
+    attrs: {
+      "for": ""
+    }
+  }, [_vm._v("Title *")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.updateCardPayload.title,
+      expression: "updateCardPayload.title"
+    }],
+    attrs: {
+      type: "text",
+      placeholder: "e.g. lorem ipsum",
+      required: ""
+    },
+    domProps: {
+      value: _vm.updateCardPayload.title
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+
+        _vm.$set(_vm.updateCardPayload, "title", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("div", [_c("label", {
+    attrs: {
+      "for": ""
+    }
+  }, [_vm._v("Description")]), _vm._v(" "), _c("textarea", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.updateCardPayload.description,
+      expression: "updateCardPayload.description"
+    }],
+    attrs: {
+      cols: "30",
+      rows: "10",
+      placeholder: "e.g. lorem ipsum"
+    },
+    domProps: {
+      value: _vm.updateCardPayload.description
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+
+        _vm.$set(_vm.updateCardPayload, "description", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("div", [_c("button", {
+    on: {
+      click: function click($event) {
+        return _vm.updateCard(_vm.updateCardPayload.id);
+      }
+    }
+  }, [_vm._v(" Save ")]), _vm._v(" "), _c("button", {
+    on: {
+      click: _vm.closeUpdateCardModal
+    }
+  }, [_vm._v(" Cancel")])]), _vm._v(" "), _c("div", {
+    staticClass: "AddCard__modal--errorTxt",
+    domProps: {
+      textContent: _vm._s(_vm.updateCardPayload.error)
+    }
+  })])])]), _vm._v(" "), _c("modal", {
     attrs: {
       name: "add-new-card",
       transition: "pop-out",
@@ -2311,10 +2520,67 @@ var render = function render() {
     domProps: {
       textContent: _vm._s(_vm.addNewCardPayload.error)
     }
+  })])])]), _vm._v(" "), _c("modal", {
+    attrs: {
+      name: "add-new-category",
+      transition: "pop-out",
+      width: _vm.modalWidth,
+      "focus-trap": true,
+      height: 300,
+      clickToClose: false
+    }
+  }, [_c("div", {
+    staticClass: "AddCard__modal"
+  }, [_c("fieldset", [_c("legend", [_vm._v("Add New Category:")]), _vm._v(" "), _c("div", [_c("label", {
+    attrs: {
+      "for": ""
+    }
+  }, [_vm._v("Title *")]), _vm._v(" "), _c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.addNewCategoryPayload.title,
+      expression: "addNewCategoryPayload.title"
+    }],
+    attrs: {
+      type: "text",
+      placeholder: "e.g. lorem ipsum",
+      required: ""
+    },
+    domProps: {
+      value: _vm.addNewCategoryPayload.title
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+
+        _vm.$set(_vm.addNewCategoryPayload, "title", $event.target.value);
+      }
+    }
+  })]), _vm._v(" "), _c("div", [_c("button", {
+    on: {
+      click: _vm.saveNewCategory
+    }
+  }, [_vm._v(" + Create ")]), _vm._v(" "), _c("button", {
+    on: {
+      click: _vm.closeAddNewCategoryModal
+    }
+  }, [_vm._v(" Cancel")])]), _vm._v(" "), _c("div", {
+    staticClass: "AddCard__modal--errorTxt",
+    domProps: {
+      textContent: _vm._s(_vm.addNewCategoryPayload.error)
+    }
   })])])])], 1);
 };
 
-var staticRenderFns = [];
+var staticRenderFns = [function () {
+  var _vm = this,
+      _c = _vm._self._c;
+
+  return _c("div", {
+    staticClass: "list__header"
+  }, [_c("p", [_c("strong", [_vm._v("New Category")])])]);
+}];
 render._withStripped = true;
 
 

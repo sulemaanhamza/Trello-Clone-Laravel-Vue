@@ -18,3 +18,4 @@ use App\Http\Controllers\CategoryController;
 
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('cards', CardController::class);
+Route::put('cards/{card}/update-category', [CardController::class,'updateCategory']);

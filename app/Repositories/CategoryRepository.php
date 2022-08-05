@@ -16,7 +16,7 @@ class CategoryRepository
             $query->where($filters);
         }
 
-        $categories = $query->get();
+        $categories = $query->where('status',true)->get();
 
 
         return $categories;
@@ -42,5 +42,26 @@ class CategoryRepository
 
 
         throw new Exception('Title is required to store new category');
+    }
+
+
+    public function disableLinkedCards($category)
+    {
+        if($category->cards()->update(['status'=>false]))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function disable($category)
+    {
+        if($category->update(['status'=>false]))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

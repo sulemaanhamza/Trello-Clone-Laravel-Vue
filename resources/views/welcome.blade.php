@@ -13,6 +13,10 @@
         <script src="{{ asset('js/app.js') }}" async defer></script>
     </head>
     <body class="antialiased">
+        <div id="nav">
+            <h4>Bemo Coding Test</h4>
+            <a href="/download/database-dump">Export Database</a>
+        </div>
         <div id="app">
             <board />
         </div>
