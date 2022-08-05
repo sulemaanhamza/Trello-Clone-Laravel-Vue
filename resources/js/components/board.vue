@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class='layout'>
-
             <div class='layout__list' v-for="category in categoriesWithCards" v-bind:key="category.id">
                 <div class="list__header">
                     <p><strong>{{ category.title || '' }}</strong></p>
@@ -31,26 +30,8 @@
 
         </div>
 
-        <modal name="update-existing-card" transition="pop-out" :width="modalWidth" :focus-trap="true" :height="500" :clickToClose="false">
-            <div class="AddCard__modal">
-                <fieldset>
-                    <legend>Update Card:</legend>
-                    <div>
-                        <label for="">Title *</label>
-                        <input type="text" v-model="updateCardPayload.title" placeholder="e.g. lorem ipsum" required>
-                    </div>
-                    <div>
-                        <label for="">Description</label>
-                        <textarea v-model="updateCardPayload.description" cols="30" rows="10" placeholder="e.g. lorem ipsum"></textarea>
-                    </div>
-                    <div>
-                        <button @click="updateCard(updateCardPayload.id)"> Save </button>
-                        <button @click="closeUpdateCardModal"> Cancel</button>
-                    </div>
-                    <div class="AddCard__modal--errorTxt" v-text="updateCardPayload.error"></div>
-                </fieldset>
-            </div>
-        </modal>
+
+        <!-- Modals -->
 
         <modal name="add-new-card" transition="pop-out" :width="modalWidth" :focus-trap="true" :height="500" :clickToClose="false">
             <div class="AddCard__modal">
@@ -69,6 +50,27 @@
                         <button @click="closeAddNewCardModal"> Cancel</button>
                     </div>
                     <div class="AddCard__modal--errorTxt" v-text="addNewCardPayload.error"></div>
+                </fieldset>
+            </div>
+        </modal>
+
+        <modal name="update-existing-card" transition="pop-out" :width="modalWidth" :focus-trap="true" :height="500" :clickToClose="false">
+            <div class="AddCard__modal">
+                <fieldset>
+                    <legend>Update Card:</legend>
+                    <div>
+                        <label for="">Title *</label>
+                        <input type="text" v-model="updateCardPayload.title" placeholder="e.g. lorem ipsum" required>
+                    </div>
+                    <div>
+                        <label for="">Description</label>
+                        <textarea v-model="updateCardPayload.description" cols="30" rows="10" placeholder="e.g. lorem ipsum"></textarea>
+                    </div>
+                    <div>
+                        <button @click="updateCard(updateCardPayload.id)"> Save </button>
+                        <button @click="closeUpdateCardModal"> Cancel</button>
+                    </div>
+                    <div class="AddCard__modal--errorTxt" v-text="updateCardPayload.error"></div>
                 </fieldset>
             </div>
         </modal>
@@ -101,6 +103,8 @@ export default {
     components: {
             draggable,
     },
+
+    props: ['token'],
 
     data() {
         return {
@@ -137,7 +141,7 @@ export default {
 
         fetchBoardData() {
 
-            axios.get('/api/categories?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo')
+            axios.get(`/api/categories?access_token=${this.token}`)
                 .then(resp => {
                     const data = resp.data;
 
@@ -161,7 +165,7 @@ export default {
 
             if(targetCategory !== undefined && ItemId !== undefined)
             {
-                axios.put(`/api/cards/${ItemId}/update-category?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo&category=${targetCategory}`)
+                axios.put(`/api/cards/${ItemId}/update-category?access_token=${this.token}&category=${targetCategory}`)
                     .then(resp => {
                         this.fetchBoardData();
                     })
@@ -177,6 +181,7 @@ export default {
             this.addNewCardPayload.category_id = category;
             this.$modal.show('add-new-card')
         },
+
         saveNewcard() {
 
             if(!this.addNewCardPayload.title || this.addNewCardPayload.title == '')
@@ -194,7 +199,7 @@ export default {
                 this.addNewCardPayload.error = null;
 
 
-                axios.post(`/api/cards?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo`, {
+                axios.post(`/api/cards?access_token=${this.token}`, {
                     category_id: this.addNewCardPayload.category_id,
                     title: this.addNewCardPayload.title,
                     description: this.addNewCardPayload.description
@@ -209,6 +214,7 @@ export default {
                     })
             }
         },
+
         closeAddNewCardModal() {
             this.addNewCardPayload = {
                 category_id: null,
@@ -217,10 +223,11 @@ export default {
             }
             this.$modal.hide('add-new-card');
         },
+
         deleteSingleCard(card) {
             if(confirm('Are you sure you want to delete this?'))
             {
-                axios.delete(`/api/cards/${card}?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo`)
+                axios.delete(`/api/cards/${card}?access_token=${this.token}`)
                     .then(resp => {
                         this.fetchBoardData();
                     })
@@ -230,6 +237,7 @@ export default {
                     })
             }
         },
+
         saveNewCategory() {
 
             if(!this.addNewCategoryPayload.title || this.addNewCategoryPayload.title == '')
@@ -242,7 +250,7 @@ export default {
                  this.addNewCategoryPayload.error = null;
 
 
-                axios.post(`/api/categories?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo`, {
+                axios.post(`/api/categories?access_token=${this.token}`, {
                     title: this.addNewCategoryPayload.title,
                 })
                     .then(resp => {
@@ -255,6 +263,7 @@ export default {
                     })
             }
         },
+
         closeAddNewCategoryModal() {
             this.addNewCategoryPayload = {
                 title: null,
@@ -263,11 +272,12 @@ export default {
 
             this.$modal.hide('add-new-category')
         },
+
         deleteCategory(category) {
 
             if(confirm('Are you sure? This will delete category and all linked cards.'))
             {
-                axios.delete(`/api/categories/${category}?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo`)
+                axios.delete(`/api/categories/${category}?access_token=${this.token}`)
                     .then(resp => {
                         this.fetchBoardData();
                     })
@@ -277,6 +287,7 @@ export default {
                     })
             }
         },
+
         showSingleCardModal(category,card) {
 
             let cat = this.categoriesWithCards.find(ct => ct.id === category);
@@ -324,7 +335,7 @@ export default {
                 this.updateCardPayload.error = null;
 
 
-                axios.put(`/api/cards/${card}?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo`, {
+                axios.put(`/api/cards/${card}?access_token=${this.token}`, {
                     title: this.updateCardPayload.title,
                     description: this.updateCardPayload.description
                 })

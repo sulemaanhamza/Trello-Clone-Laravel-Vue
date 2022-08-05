@@ -16,8 +16,8 @@ class CategoryCardSeeder extends Seeder
     public function run()
     {
         Category::factory()
-                ->count(6)
-                ->hasCards(rand(6,14))
+                ->count(3)
+                ->hasCards(rand(3,6))
                 ->create();
     }
 }

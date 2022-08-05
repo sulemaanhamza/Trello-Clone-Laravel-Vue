@@ -18,7 +18,7 @@
             <a href="/download/database-dump">Export Database</a>
         </div>
         <div id="app">
-            <board />
+            <board token="{{ config('app.access_token') }}" />
         </div>
     </body>
 </html>
