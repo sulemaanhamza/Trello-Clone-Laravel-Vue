@@ -12,7 +12,7 @@
                         <label class='card__label'>
                             <a href="javascript:;" @click="showSingleCardModal(category.id,card.id)">{{ card.title || '' }}</a>
                         </label>
-                        <a href="">x</a>
+                        <button @click="deleteSingleCard(card.id)">x</button>
                     </div>
                     <div  slot="header" class="card__add">
                         <button class="card__add--btn" @click="addNewCard(category.id, $event)">+ Add New Card</button>
@@ -217,8 +217,19 @@ export default {
             }
             this.$modal.hide('add-new-card');
         },
-
-
+        deleteSingleCard(card) {
+            if(confirm('Are you sure you want to delete this?'))
+            {
+                axios.delete(`/api/cards/${card}?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo`)
+                    .then(resp => {
+                        this.fetchBoardData();
+                    })
+                    .catch(err => {
+                        this.fetchBoardData();
+                        console.log(err);
+                    })
+            }
+        },
         saveNewCategory() {
 
             if(!this.addNewCategoryPayload.title || this.addNewCategoryPayload.title == '')
@@ -261,7 +272,7 @@ export default {
                         this.fetchBoardData();
                     })
                     .catch(err => {
-                        this.closeAddNewCardModal();
+                        this.fetchBoardData();
                         console.log(err);
                     })
             }

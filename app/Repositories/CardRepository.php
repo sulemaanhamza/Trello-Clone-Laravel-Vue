@@ -4,7 +4,9 @@ namespace App\Repositories;
 
 use App\Models\Card;
 use App\Models\Category;
+use Carbon\Carbon;
 use Exception;
+use Throwable;
 
 class CardRepository
 {
@@ -15,10 +17,32 @@ class CardRepository
 
         if(count($filters) > 0)
         {
-            $query->where($filters);
+            if(!empty($filters['date']))
+            {
+                try
+                {
+                    $filterDate = Carbon::createFromFormat('Y-m-d', $filters['date']);
+
+                    if($filterDate)
+                    {
+                        $query->whereDate('created_at',$filterDate);
+                    }
+                }
+                catch(Throwable $e)
+                {
+                    report($e);
+                }
+            }
+
+            if(isset($filters['status']))
+            {
+                $filterStatus = (bool) $filters['status'];
+
+                $query->whereStatus($filterStatus);
+            }
         }
 
-        $cards = $query->get();
+        $cards = $query->latest()->get();
 
 
         return $cards;

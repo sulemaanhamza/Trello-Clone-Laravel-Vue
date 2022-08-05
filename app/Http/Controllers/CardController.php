@@ -4,10 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Card;
 use App\Models\Category;
+use App\Repositories\CardRepository;
 use Illuminate\Http\Request;
 
 class CardController extends Controller
 {
+    protected $rep;
+
+    public function __construct()
+    {
+        $this->repo = new CardRepository;
+    }
+
+    public function index(Request $request)
+    {
+        $cards = $this->repo->getCards($request->except('access_token'));
+
+        return response()->json($cards);
+    }
+
     public function store(Request $request)
     {
         if($request->has(['category_id','title']))
@@ -59,6 +74,16 @@ class CardController extends Controller
             }
         }
 
+
+        return response()->json(['status'=>'error'],500);
+    }
+
+    public function destroy(Card $card)
+    {
+        if($card->update(['status'=>false]))
+        {
+            return response()->json(['status'=>'success']);
+        }
 
         return response()->json(['status'=>'error'],500);
     }

@@ -2169,8 +2169,21 @@ var MODAL_WIDTH = 656;
       };
       this.$modal.hide('add-new-card');
     },
-    saveNewCategory: function saveNewCategory() {
+    deleteSingleCard: function deleteSingleCard(card) {
       var _this4 = this;
+
+      if (confirm('Are you sure you want to delete this?')) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default()["delete"]("/api/cards/".concat(card, "?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo")).then(function (resp) {
+          _this4.fetchBoardData();
+        })["catch"](function (err) {
+          _this4.fetchBoardData();
+
+          console.log(err);
+        });
+      }
+    },
+    saveNewCategory: function saveNewCategory() {
+      var _this5 = this;
 
       if (!this.addNewCategoryPayload.title || this.addNewCategoryPayload.title == '') {
         this.addNewCategoryPayload.error = 'Category title is required';
@@ -2180,11 +2193,11 @@ var MODAL_WIDTH = 656;
         axios__WEBPACK_IMPORTED_MODULE_1___default().post("/api/categories?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo", {
           title: this.addNewCategoryPayload.title
         }).then(function (resp) {
-          _this4.closeAddNewCategoryModal();
+          _this5.closeAddNewCategoryModal();
 
-          _this4.fetchBoardData();
+          _this5.fetchBoardData();
         })["catch"](function (err) {
-          _this4.closeAddNewCategoryModal();
+          _this5.closeAddNewCategoryModal();
 
           console.log(err);
         });
@@ -2198,13 +2211,13 @@ var MODAL_WIDTH = 656;
       this.$modal.hide('add-new-category');
     },
     deleteCategory: function deleteCategory(category) {
-      var _this5 = this;
+      var _this6 = this;
 
       if (confirm('Are you sure? This will delete category and all linked cards.')) {
         axios__WEBPACK_IMPORTED_MODULE_1___default()["delete"]("/api/categories/".concat(category, "?access_token=3|Etv3Hplu9TikAnUc31gAtvMmZyYvqrk0BicUSZdo")).then(function (resp) {
-          _this5.fetchBoardData();
+          _this6.fetchBoardData();
         })["catch"](function (err) {
-          _this5.closeAddNewCardModal();
+          _this6.fetchBoardData();
 
           console.log(err);
         });
@@ -2237,7 +2250,7 @@ var MODAL_WIDTH = 656;
       this.$modal.hide('update-existing-card');
     },
     updateCard: function updateCard(card) {
-      var _this6 = this;
+      var _this7 = this;
 
       if (!this.updateCardPayload.title || this.updateCardPayload.title == '') {
         this.updateCardPayload.error = 'Card title is required';
@@ -2251,11 +2264,11 @@ var MODAL_WIDTH = 656;
           title: this.updateCardPayload.title,
           description: this.updateCardPayload.description
         }).then(function (resp) {
-          _this6.closeUpdateCardModal();
+          _this7.closeUpdateCardModal();
 
-          _this6.fetchBoardData();
+          _this7.fetchBoardData();
         })["catch"](function (err) {
-          _this6.closeUpdateCardModal();
+          _this7.closeUpdateCardModal();
 
           console.log(err);
         });
@@ -2336,9 +2349,11 @@ var render = function render() {
             return _vm.showSingleCardModal(category.id, card.id);
           }
         }
-      }, [_vm._v(_vm._s(card.title || ""))])]), _vm._v(" "), _c("a", {
-        attrs: {
-          href: ""
+      }, [_vm._v(_vm._s(card.title || ""))])]), _vm._v(" "), _c("button", {
+        on: {
+          click: function click($event) {
+            return _vm.deleteSingleCard(card.id);
+          }
         }
       }, [_vm._v("x")])]);
     }), _vm._v(" "), _c("div", {
